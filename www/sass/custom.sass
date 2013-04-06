@@ -1,18 +1,58 @@
+@import "compass/css3/box-shadow"
+
+$maleColor: #6a3a33
+$femaleColor: #43c205
+
+body, h1, h2, h3, h4, h5, h6
+	font-family: "Source Sans Pro", sans
+
+body	
+	background: #F0F0F0
+
+.row
+	background: #FFF
+	padding: 0 1em
+	border-left: 1px solid #AAA
+	border-right: 1px solid #AAA
+
+.chartWrapper
+	padding: 2em 0
+
+h1
+	margin-bottom: 0
+
+.male
+	color: $maleColor
+
+.female
+	color: $femaleColor
+
+.legend
+	
+	font-size: 14px
+	font-style: italic
+
+.subhead
+	font-style: italic
+
 .chart
 	width: 100%
-	height: 600px
+	height: 700px
 
 svg
+
 	text
 		font-size: 11px
+
 	display: block
-	margin: 0 auto
+	margin: 20 auto
 
 	.tick
 		text
 			fill: #444
+			font-weight: 600
 		line
-			stroke: #DDD
+			stroke: #999
 			stroke-width: 1
 			shape-rendering: crispEdges
 
@@ -20,18 +60,59 @@ svg
 		fill: none
 
 	.male
-		fill: #532c24
+		fill: $maleColor
 
 	.female
-		fill: #75d128
+		fill: $femaleColor
 
 	.bg
 		fill: #FFF
 		stroke: #FFF
 		stroke-width: 2
 
-	.averageLine
-		stroke: #419f04
-		stroke-width: 2
+	.legendBorder
+		fill: #FFF
+		stroke: #CCC
+		stroke-width: 1
 		shape-rendering: crispEdges
 
+	.averageLine 
+		line
+			stroke: $femaleColor
+			stroke-width: 2
+			shape-rendering: crispEdges
+			opacity: 1
+		text
+			font-weight: 600
+		
+		fill: darken($femaleColor, 10%)
+
+		&.target
+			line
+				stroke: #999
+			fill: #666
+		&.thin
+			opacity: .5
+			
+	
+.qtip
+	canvas
+		display: none
+	font-size: 12px
+	line-height: 1.4
+	@include box-shadow(rgba(#000000,.2) 1px 1px 6px)
+
+	.title			
+		font-weight: 600
+		font-size: 18px
+
+	.numFemale, .numMale
+		font-size: 16px
+		font-weight: 700
+
+	.numFemale
+		color: darken($femaleColor, 10%)
+	.numMale
+		color: $maleColor
+
+		

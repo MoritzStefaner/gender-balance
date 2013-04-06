@@ -6,36 +6,41 @@
 <head>
 	<meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
-  <title>Foundation 4</title>
+  <title>Gender balance visualization</title>
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="stylesheets/normalize.css" />
   <link rel="stylesheet" href="stylesheets/app.css" />
+  <link rel="stylesheet" href="stylesheets/qtip.css" />
   <link rel="stylesheet" href="stylesheets/custom.css" />
+  
 
   <script src="javascripts/vendor/custom.modernizr.js"></script>
   <script src="js/lib/underscore-min.js"></script>
   <script src="js/lib/backbone-min.js"></script>
   <script src="js/lib/jquery-1.9.1.min.js"></script>
+  <script src="js/lib/qtip.js"></script>
   <script src="js/lib/d3.min.js"></script>
   <script src="js/lib/tabletop.js"></script>
   <script src="js/lib/backbone.tabletopSync.js"></script>
 
 </head>
 <body>
-
-	<div class="row">
-		<div class="large-12 columns">
-			<h2>Gender balance</h2>
-			<p>in conferences on  data visualization, creative code, information graphics</p>
-			<div class="chart"></div>
+	
+		<div class="row">
+			<div class="large-12 columns">
+				<h1>Gender balance</h1>
+				<p class="subhead">in conferences on  data visualization, creative code, information graphics</p>
+			</div>
 		</div>
-		
 
-	</div>
-
-	<div class="row">
-		
-	</div>
+		<div class="row">
+			<div class="chartWrapper large-12 columns">
+				<div class="chart"></div>
+			</div>
+		</div>
+	
 
   <script>
   document.write('<script src=' +

@@ -1,49 +1,158 @@
-/* line 1, ../sass/custom.sass */
-.chart {
-  width: 100%;
-  height: 600px;
+/* line 6, ../sass/custom.sass */
+body, h1, h2, h3, h4, h5, h6 {
+  font-family: "Source Sans Pro", sans;
 }
 
-/* line 5, ../sass/custom.sass */
+/* line 9, ../sass/custom.sass */
+body {
+  background: #f0f0f0;
+}
+
+/* line 12, ../sass/custom.sass */
+.row {
+  background: white;
+  padding: 0 1em;
+  border-left: 1px solid #aaaaaa;
+  border-right: 1px solid #aaaaaa;
+}
+
+/* line 18, ../sass/custom.sass */
+.chartWrapper {
+  padding: 2em 0;
+}
+
+/* line 21, ../sass/custom.sass */
+h1 {
+  margin-bottom: 0;
+}
+
+/* line 24, ../sass/custom.sass */
+.male {
+  color: #6a3a33;
+}
+
+/* line 27, ../sass/custom.sass */
+.female {
+  color: #43c205;
+}
+
+/* line 30, ../sass/custom.sass */
+.legend {
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* line 35, ../sass/custom.sass */
+.subhead {
+  font-style: italic;
+}
+
+/* line 38, ../sass/custom.sass */
+.chart {
+  width: 100%;
+  height: 700px;
+}
+
+/* line 42, ../sass/custom.sass */
 svg {
   display: block;
-  margin: 0 auto;
+  margin: 20 auto;
 }
-/* line 6, ../sass/custom.sass */
+/* line 44, ../sass/custom.sass */
 svg text {
   font-size: 11px;
 }
-/* line 12, ../sass/custom.sass */
+/* line 51, ../sass/custom.sass */
 svg .tick text {
   fill: #444444;
+  font-weight: 600;
 }
-/* line 14, ../sass/custom.sass */
+/* line 54, ../sass/custom.sass */
 svg .tick line {
-  stroke: #dddddd;
+  stroke: #999999;
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
-/* line 19, ../sass/custom.sass */
+/* line 59, ../sass/custom.sass */
 svg .domain {
   fill: none;
 }
-/* line 22, ../sass/custom.sass */
+/* line 62, ../sass/custom.sass */
 svg .male {
-  fill: #532c24;
+  fill: #6a3a33;
 }
-/* line 25, ../sass/custom.sass */
+/* line 65, ../sass/custom.sass */
 svg .female {
-  fill: #75d128;
+  fill: #43c205;
 }
-/* line 28, ../sass/custom.sass */
+/* line 68, ../sass/custom.sass */
 svg .bg {
   fill: white;
   stroke: white;
   stroke-width: 2;
 }
-/* line 33, ../sass/custom.sass */
+/* line 73, ../sass/custom.sass */
+svg .legendBorder {
+  fill: white;
+  stroke: #cccccc;
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+/* line 79, ../sass/custom.sass */
 svg .averageLine {
-  stroke: #419f04;
+  fill: #329004;
+}
+/* line 80, ../sass/custom.sass */
+svg .averageLine line {
+  stroke: #43c205;
   stroke-width: 2;
   shape-rendering: crispEdges;
+  opacity: 1;
+}
+/* line 85, ../sass/custom.sass */
+svg .averageLine text {
+  font-weight: 600;
+}
+/* line 90, ../sass/custom.sass */
+svg .averageLine.target {
+  fill: #666666;
+}
+/* line 91, ../sass/custom.sass */
+svg .averageLine.target line {
+  stroke: #999999;
+}
+/* line 94, ../sass/custom.sass */
+svg .averageLine.thin {
+  opacity: 0.5;
+}
+
+/* line 98, ../sass/custom.sass */
+.qtip {
+  font-size: 12px;
+  line-height: 1.4;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
+  box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
+}
+/* line 99, ../sass/custom.sass */
+.qtip canvas {
+  display: none;
+}
+/* line 105, ../sass/custom.sass */
+.qtip .title {
+  font-weight: 600;
+  font-size: 18px;
+}
+/* line 109, ../sass/custom.sass */
+.qtip .numFemale, .qtip .numMale {
+  font-size: 16px;
+  font-weight: 700;
+}
+/* line 113, ../sass/custom.sass */
+.qtip .numFemale {
+  color: #329004;
+}
+/* line 115, ../sass/custom.sass */
+.qtip .numMale {
+  color: #6a3a33;
 }

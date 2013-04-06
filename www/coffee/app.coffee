@@ -2,6 +2,8 @@ storage = Tabletop.init
 	key: '0AkTjJmB1VuOXdGV1NkRnU1Y4d2pJeHd6Y2wybTZ1ZVE'
 	wait: true
 
+# -----------------------------------
+
 class Event extends Backbone.Model
 	tabletop:
 		instance: storage
@@ -21,6 +23,8 @@ class Events extends Backbone.Collection
 	sync: Backbone.tabletopSync
 	model: Event
 
+# -----------------------------------
+
 initVis = =>
 	console.log @events
 	data = @events.toJSON()
@@ -30,23 +34,23 @@ initVis = =>
 	avgTotal = (d3.sum data, (x) -> x.numFemale) / totalNumSpeakers
 
 	svg = d3.select(".chart")
-		.append('svg')
+		.append("svg")
 		.attr(
-			'width': "100%"
-			'height': "100%"
+			width: "100%"
+			height: "100%"
 		)
 
 	w = $(".chart").width()
 	h = $(".chart").height()
 
 	padding = 
-		top: 20
+		top: 35
 		right: 20
-		bottom: 40
+		bottom: 140
 		left: 20
 
-	chartHeight = h-padding.top-padding.bottom
-	chartWidth = w-padding.left-padding.right
+	chartHeight = h - padding.top  - padding.bottom
+	chartWidth  = w - padding.left - padding.right
 
 	widthScale = d3.scale.linear()
 		.domain([0, 1])
@@ -67,11 +71,7 @@ initVis = =>
 	y = 0
 	for d in data
 		d.y = y
-		y += 1+posScale d.numTotal
-
-	
-
-	console.log totalNumSpeakers
+		y += 1 + posScale d.numTotal
 
 	container = svg.append("g")
 		.attr(
@@ -88,41 +88,147 @@ initVis = =>
 			"#{Math.floor(d*100)}%"
 		)
 
+	
+
+	averageLine = container.append("g")
+		.classed("averageLine", true)
+		.attr(
+			transform: "translate(#{valueScale(avg)}, #{chartHeight + 130})"
+		)
+
+	averageLine.append("line")
+		.attr(
+			x1: 0
+			x2: 0
+			y1: 0
+			y2: -110
+			#"stroke-dasharray": "2,2"
+		)
+
+	averageLine.append("text")
+		.attr(
+			x: 5
+		)
+		.text("Average ratio of women speakers at a conference")
+
+	averageLine2 = container.append("g")
+		.classed("averageLine", true)
+		.attr(
+			transform: "translate(#{valueScale(avgTotal)}, #{chartHeight + 100})"
+		)
+
+	averageLine2.append("line")
+		.attr(
+			x1: 0
+			x2: 0
+			y1: 0
+			y2: -80
+			# "stroke-dasharray": "2,2"
+		)
+
+	averageLine2.append("text")
+		.attr(
+			x: 5
+		)
+		.text("Overall average of female speakers")
+
+	averageLine3 = container.append("g")
+		.classed("averageLine target", true)
+		.attr(
+			transform: "translate(#{valueScale(.25)}, #{chartHeight + 70})"
+		)
+
+	averageLine3.append("line")
+		.attr(
+			x1: 0
+			x2: 0
+			y1: 0
+			y2: -50
+			# "stroke-dasharray": "2,2"
+		)
+
+	averageLine3.append("text")
+		.attr(
+			x: 5
+		)
+		.text("Percentage of women in datavisualization (*)")
+
+	# averageLine4 = container.append("g")
+	# 	.classed("averageLine target thin", true)
+	# 	.attr(
+	# 		transform: "translate(#{valueScale(.495)}, #{chartHeight + 70})"
+	# 	)
+
+	# averageLine4.append("line")
+	# 	.attr(
+	# 		x1: 0
+	# 		x2: 0
+	# 		y1: 0
+	# 		y2: -50
+	# 		# "stroke-dasharray": "2,2"
+	# 	)
+
+	# averageLine4.append("text")
+	# 	.attr(
+	# 		x: 5
+	# 	)
+	# 	.text("Percentage of women in population")
+
+	container.append("rect")	
+		.attr(
+			x: -padding.left-3
+			y: -padding.top
+			width: w+6
+			height: padding.top-5
+		)
+		.classed("legendBorder", true)
+
+	container.append("rect")	
+		.attr(
+			x: -padding.left-3
+			y: chartHeight-1
+			width: w+6
+			height: 30
+		)
+		.classed("legendBorder", true)
+	
 	container.append("g")
 		.classed(
 			"axisLegend x": true
 		)
 		.call(xAxis)
-
-	averageLine = container.append("g")
-		.classed("averageLine", true)
+		.selectAll("line")
 		.attr(
-			transform: "translate(#{valueScale(avg)}, 0)"
+			
+			"stroke-dasharray": "1,3"
 		)
 
-	averageLine.append("line")
+	container.append("text")	
 		.attr(
-			x1: 0
-			x2: 0
-			y1: 0
-			y2: chartHeight
-			"stroke-dasharray": "2,2"
+			x: -10 + valueScale 0
+			y: -15
+		)
+		.classed("male legend", true)
+		.text("Only male speakers")
+
+	container.append("text")	
+		.attr(
+			x: 10 + valueScale 1
+			y: -15
+			"text-anchor": "end"
 		)
 
-	averageLine = container.append("g")
-		.classed("averageLine", true)
-		.attr(
-			transform: "translate(#{valueScale(avgTotal)}, 0)"
-		)
+		.classed("female legend", true)
+		.text("Only female speakers")
 
-	averageLine.append("line")
+	container.append("text")	
 		.attr(
-			x1: 0
-			x2: 0
-			y1: 0
-			y2: chartHeight
-			"stroke-dasharray": "2,2"
+			x: valueScale .5
+			y: -15
+			"text-anchor": "middle"
 		)
+		.classed("legend", true)
+		.text("Equal mixture")
 
 	events = container.append("g")
 		.selectAll("g.event")
@@ -134,13 +240,18 @@ initVis = =>
 			"event": true
 		)
 		.attr(
-			"title": (d) -> d.event
+			"title": (d) -> 
+				"""
+					<div><span class="title">#{d.event}</span><div>
+					<div><span class="numFemale">#{d.numFemale}</span> female speakers<div>
+					<div><span class="numMale">#{d.numMale}</span> male speakers<div>
+				"""
 		)
 
 	enter.append("rect")
 		.classed("bg", true)
 		.attr(
-			x: -widthScale(d.ratioFemale)-1
+			x: -widthScale(.5)
 			y: 0
 			width: (d) -> widthScale 1
 			height: (d) -> posScale d.numTotal
@@ -149,25 +260,26 @@ initVis = =>
 	enter.append("rect")
 		.classed("male", true)
 		.attr(
-			x:0
-			y:0
-			width: (d) -> widthScale 1-d.ratioFemale
+			x: (d) -> -widthScale(.5) - 1
+			y: 0
+			width: (d) -> widthScale(1-d.ratioFemale)
 			height: (d) -> posScale d.numTotal
-		)
-
+	)
+	
 	enter.append("rect")
 		.classed("female", true)
 		.attr(
-			x: (d) -> -widthScale(d.ratioFemale)-1
+			x: (d) -> - widthScale(.5)  + widthScale(1-d.ratioFemale)
 			y: 0
 			width: (d) -> widthScale d.ratioFemale
 			height: (d) -> posScale d.numTotal
 		)
+		
 
 	enter.append("text")
 		.attr(
-			x: widthScale(1-d.ratioFemale) + 8
-			y: 10
+			x: widthScale(.5) + 5
+			y: 8
 			visibility: (d) -> "hidden" if posScale (d.numTotal) < 20
 		)
 		.text((d)->
@@ -175,14 +287,14 @@ initVis = =>
 		)
 		.style(
 			"stroke": "#FFF"
-			"stroke-width": "10px"
+			"stroke-width": "8px"
 		)
 
 	enter.append("text")
 		.attr(
-			x: widthScale(1-d.ratioFemale) + 8
-			y: 10
-			visibility: (d) -> "hidden" if posScale (d.numTotal) < 20
+			x: widthScale(.5) + 5
+			y: 8
+			visibility: (d) -> "hidden" if posScale (d.numTotal) < 18
 		)
 		.text((d)->
 			d.event
@@ -192,9 +304,26 @@ initVis = =>
 	events
 		.attr(
 			transform: (d) -> 
-				"translate(#{valueScale(d.ratioFemale)}, #{d.y})" 
+				"translate(#{valueScale(d.ratioFemale)}, #{d.y+20})" 
 		)
+		.style("cursor", "pointer")
 	
+	events.each(() ->
+		console.log @
+		$(@).qtip(
+			content: true
+			position:
+				my: "left center"
+				at: "right center"
+				target: "mouse"
+				adjust:
+					x:  5
+					y:  0
+			style:
+				classes: 'qtip-light'
+		)
+	)
+	@
 $ => 
 	console.log "* * *"
 	@events = new Events()
