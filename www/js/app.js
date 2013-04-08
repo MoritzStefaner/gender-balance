@@ -26,6 +26,7 @@
     Event.prototype.sync = Backbone.tabletopSync;
 
     Event.prototype.initialize = function(o) {
+      this.set("series", o["Conference Series"]);
       this.set("numMale", Number(o.nummale));
       this.set("numFemale", Number(o.numfemale));
       this.set("numTotal", Number(o.numfemale) + Number(o.nummale));

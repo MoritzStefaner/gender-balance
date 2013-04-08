@@ -10,6 +10,7 @@ class Event extends Backbone.Model
 		sheet: 'collection'
 	sync: Backbone.tabletopSync
 	initialize: (o)->
+		@.set "series", o["Conference Series"]
 		@.set "numMale", Number(o.nummale)
 		@.set "numFemale", Number(o.numfemale)
 		@.set "numTotal", Number(o.numfemale) + Number(o.nummale)
