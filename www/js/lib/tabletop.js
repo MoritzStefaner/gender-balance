@@ -264,7 +264,8 @@
         this.model_names.push(model.name);
       }
       this.sheetsToLoad--;
-      if(this.sheetsToLoad === 0)
+      this.log("loadSheet", this.sheetsToLoad, data, this);
+      if(!this.sheetsToLoad)
         this.doCallback();
     },
 
@@ -274,7 +275,8 @@
       Tests this.sheetsToLoad just in case a race condition happens to show up
     */
     doCallback: function() {
-      if(this.sheetsToLoad === 0)
+      this.log("doCallback");
+      if(!this.sheetsToLoad)
       this.callback.apply(this.callbackContext || this, [this.data(), this]);
     },
 
@@ -295,6 +297,8 @@
     Options should be in the format { data: XXX }, with XXX being the list-based worksheet
   */
   Tabletop.Model = function(options) {
+    options.tabletop.log("Model", options);
+
     var i, j, ilen, jlen;
     this.column_names = [];
     this.name = options.data.feed.title.$t;

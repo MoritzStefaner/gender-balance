@@ -15,11 +15,11 @@
   <link rel="stylesheet" href="stylesheets/qtip.css" />
   <link rel="stylesheet" href="stylesheets/custom.css" />
   
+  <script src="js/lib/jquery-1.9.1.min.js"></script>
 
   <script src="javascripts/vendor/custom.modernizr.js"></script>
   <script src="js/lib/underscore-min.js"></script>
-  <script src="js/lib/backbone-min.js"></script>
-  <script src="js/lib/jquery-1.9.1.min.js"></script>
+  <script src="js/lib/backbone.js"></script>
   <script src="js/lib/qtip.js"></script>
   <script src="js/lib/d3.min.js"></script>
   <script src="js/lib/tabletop.js"></script>
@@ -27,7 +27,7 @@
 
 </head>
 <body>
-	
+	<div class="page">
 		<div class="row">
 			<div class="large-12 columns">
 				<h1>Gender balance</h1>
@@ -37,10 +37,99 @@
 
 		<div class="row">
 			<div class="chartWrapper large-12 columns">
+				<div class="controls">
+					<div id="sortMode">
+						<p>Sort by: </p>
+						<a data-value="RATIO" class="active">Proportion of female speakers</a>		
+						<a data-value="NUM">Number of speakers</a>		
+						<a data-value="SERIES">Conference series</a>
+						<a data-value="TIME">Date</a>		
+					</div>	
+					<div id="scaling">
+						<p>Height of bars: </p>
+						<a data-value="NUM" class="active" >By number of speakers</a>	
+						<a data-value="IDENTICAL">Identical</a>	
+					</div>	
+				</div>
 				<div class="chart"></div>
 			</div>
 		</div>
-	
+		<div class="row" style="padding-top: 2em;">
+			<div class="large-6 columns"style="font-size: 21px">
+				<p>
+					After a few discussions on gender balance in data visualization (and related fields such as information graphics and creative code), I simply decided to collect some data to find out how many women we actually have in the field, and how well they are represented at conferences. 
+				</p>
+				<p>
+					To this end, I manually counted the number of male and female speakers at conferences (with a little help from my <a href="http://driven-by-data.net">friends</a>) in a <a href="https://docs.google.com/spreadsheet/ccc?key=0AkTjJmB1VuOXdGV1NkRnU1Y4d2pJeHd6Y2wybTZ1ZVE#gid=0">Google spreadsheet</a> and visualized the data with d3.js 
+				</p>
+
+			</div>
+			<div class="large-6 columns">
+				<h5>How do I read this?</h5>
+				<p>
+					Each square symbol in the chart represents one conference. Most of them have two parts: a green one for the women and a brown one for the men. You can scale them vertically by the <a onclick="" href="#RATIO/NUM">overall number of speakers</a> or scale them <a href="#RATIO/IDENTICAL">uniformly</a> (better readability). The horizontal position indicates the proportion of women speakers in the line-up of the event. There are different sortings available for the vertical axis, e.g. by <a href="#TIME/NUM">time</a> or <a href="#SERIES/NUM">conference series</a>. 
+				</p>
+				<h5>How do you interpret the results? What is the take away message?</h5>
+				<p>
+					There are a few measures which are interesting to look at:
+					<ol>
+					 	<li>The average proportion of women in the line-up of a conference: <span class="stat" id="average1"></span>
+						<p class="explanation">That's roughly one out of seven.</p>
+					 	</li>
+
+					 	<li>The overall proportion of women in the speaker pool of all conferences combined: <span class="stat" id="average2"></span>
+					 	<p class="explanation">The reason that this number is higher than the first one is that larger conferences tend to have a <a href="#NUM/NUM">higher relative numbers of women speakers</a>.
+					 	</p>
+					 	</li>
+
+
+					 	<li>The estimate of the average number of women in data visualization overall: <span class="stat" id="average3">23.07%</span>
+					 	<p class="explanation">
+					 		From Andy Kirk's <a href="http://www.visualisingdata.com/index.php/2013/03/1578-responses-to-the-first-data-visualisation-census/">data visualization census</a>. I counted only the 279 women and 930 men which stated they pursue data visualization <em>full time</em> or <em>as part of their job</em>.
+					 	</p>
+					 	</li>
+					 </ol> 
+					
+				</p>
+
+				<h5>
+					So, we are quite close to the average number of women in the field. All good, right?
+				</h5>
+				<p>
+					OK, again, there is on average only 1 woman out of 7 speakers on stage at a random conference. And even if the number of speakers would match the number of professionals - why should we be happy with staying at 1 out of 4? Personally, I would love to see much more women in the field overall - ideally half of the people, right?! Let's make this happen.
+					<p class="explanation"> 
+					(For instance, by having more women speak at conferences.)
+					</p>
+				</p>
+
+				<h5>
+					Doesn't it get better over the years?
+				</h5>
+				<p>
+					<a href="#TIME/IDENTICAL">Judge yourself.</a> I can't see a trend. It does not seem to happen on its own.
+				</p>
+
+				<h5>
+					Isn't this a totally subjective selection of conferences?
+				</h5>
+				<p>
+					Yes, it is. <a href="https://docs.google.com/forms/d/1Nyle3qdJTAPVoUY2ujWfp91-bQdBW8mMmFkHZihIsKM/viewform">Help me improve it.</a> (I would like to keep it focussed on the fields of data visualization,  information graphics and creative code, though.)
+				</p>	
+				
+				<h5>I found an error! I would like to add a conference! I have strong opinions one way or the other!</h5>
+
+				<p>
+					I would be really happy, if you could send me a note via this <a href="https://docs.google.com/forms/d/1Nyle3qdJTAPVoUY2ujWfp91-bQdBW8mMmFkHZihIsKM/viewform">handy submission form</a>! Thanks!
+				</p>
+
+				<hr>
+
+				<p>
+					<em><a href="http://moritz.stefaner.eu">Moritz Stefaner</a>, 2013</em>
+				</p>
+			</div>
+		</div>
+	</div>	
 
   <script>
   document.write('<script src=' +

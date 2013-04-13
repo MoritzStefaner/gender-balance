@@ -4,155 +4,229 @@ body, h1, h2, h3, h4, h5, h6 {
 }
 
 /* line 9, ../sass/custom.sass */
-body {
-  background: #f0f0f0;
+h1, h2, h3, h4, h5, h6 {
+  color: #444444;
 }
 
 /* line 12, ../sass/custom.sass */
-.row {
-  background: white;
-  padding: 0 1em;
-  border-left: 1px solid #aaaaaa;
-  border-right: 1px solid #aaaaaa;
+a {
+  color: #1759b3;
+}
+
+/* line 15, ../sass/custom.sass */
+body {
+  background: #f0f0f0 url(../img/debut_light_mod.png);
 }
 
 /* line 18, ../sass/custom.sass */
+.row {
+  background: white;
+  border-left: 1px solid #dddddd;
+  border-right: 1px solid #dddddd;
+  margin: auto;
+  padding: 0 1em;
+}
+
+/* line 26, ../sass/custom.sass */
 .chartWrapper {
   padding: 2em 0;
 }
 
-/* line 21, ../sass/custom.sass */
+/* line 29, ../sass/custom.sass */
 h1 {
   margin-bottom: 0;
 }
 
-/* line 24, ../sass/custom.sass */
+/* line 32, ../sass/custom.sass */
 .male {
   color: #6a3a33;
 }
 
-/* line 27, ../sass/custom.sass */
+/* line 35, ../sass/custom.sass */
 .female {
   color: #43c205;
 }
 
-/* line 30, ../sass/custom.sass */
+/* line 38, ../sass/custom.sass */
 .legend {
+  font-weight: bold;
   font-size: 14px;
   font-style: italic;
 }
 
-/* line 35, ../sass/custom.sass */
+/* line 43, ../sass/custom.sass */
+.explanation {
+  font-size: 12px;
+  color: #777777;
+}
+
+/* line 47, ../sass/custom.sass */
+.stat {
+  font-weight: bold;
+  color: #333333;
+}
+
+/* line 51, ../sass/custom.sass */
 .subhead {
   font-style: italic;
 }
 
-/* line 38, ../sass/custom.sass */
+/* line 54, ../sass/custom.sass */
 .chart {
   width: 100%;
   height: 700px;
 }
 
-/* line 42, ../sass/custom.sass */
+/* line 58, ../sass/custom.sass */
+.controls {
+  position: absolute;
+  z-index: 2;
+  top: 100px;
+  right: 10px;
+  font-size: 0.8em;
+  padding: 0 1em 1em 1em;
+  background: white;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
+  box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
+}
+/* line 68, ../sass/custom.sass */
+.controls div p, .controls div a {
+  color: #555555;
+  display: block;
+  float: none;
+  clear: both;
+  margin: 1px 0 0 0;
+  line-height: 1;
+  padding: 0.4em 0.4em;
+}
+/* line 76, ../sass/custom.sass */
+.controls div p {
+  margin-top: 1em;
+  font-weight: bold;
+}
+/* line 79, ../sass/custom.sass */
+.controls div a:hover {
+  cursor: pointer;
+  background: #ebec9e;
+}
+/* line 82, ../sass/custom.sass */
+.controls div a.active {
+  background: #e6e585;
+  color: #222222;
+}
+
+/* line 86, ../sass/custom.sass */
 svg {
   display: block;
   margin: 20 auto;
 }
-/* line 44, ../sass/custom.sass */
+/* line 88, ../sass/custom.sass */
 svg text {
   font-size: 11px;
+  fill: #555555;
 }
-/* line 51, ../sass/custom.sass */
+/* line 96, ../sass/custom.sass */
 svg .tick text {
   fill: #444444;
   font-weight: 600;
 }
-/* line 54, ../sass/custom.sass */
+/* line 99, ../sass/custom.sass */
 svg .tick line {
   stroke: #999999;
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
-/* line 59, ../sass/custom.sass */
+/* line 104, ../sass/custom.sass */
 svg .domain {
   fill: none;
 }
-/* line 62, ../sass/custom.sass */
+/* line 107, ../sass/custom.sass */
 svg .male {
   fill: #6a3a33;
 }
-/* line 65, ../sass/custom.sass */
+/* line 110, ../sass/custom.sass */
 svg .female {
   fill: #43c205;
 }
-/* line 68, ../sass/custom.sass */
+/* line 113, ../sass/custom.sass */
 svg .bg {
   fill: white;
   stroke: white;
   stroke-width: 2;
 }
-/* line 73, ../sass/custom.sass */
+/* line 118, ../sass/custom.sass */
 svg .legendBorder {
   fill: white;
   stroke: #cccccc;
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
-/* line 79, ../sass/custom.sass */
+/* line 124, ../sass/custom.sass */
 svg .averageLine {
   fill: #329004;
 }
-/* line 80, ../sass/custom.sass */
+/* line 125, ../sass/custom.sass */
 svg .averageLine line {
   stroke: #43c205;
   stroke-width: 2;
   shape-rendering: crispEdges;
   opacity: 1;
 }
-/* line 85, ../sass/custom.sass */
+/* line 130, ../sass/custom.sass */
 svg .averageLine text {
   font-weight: 600;
 }
-/* line 90, ../sass/custom.sass */
+/* line 135, ../sass/custom.sass */
 svg .averageLine.target {
   fill: #666666;
 }
-/* line 91, ../sass/custom.sass */
+/* line 136, ../sass/custom.sass */
 svg .averageLine.target line {
   stroke: #999999;
 }
-/* line 94, ../sass/custom.sass */
+/* line 139, ../sass/custom.sass */
 svg .averageLine.thin {
   opacity: 0.5;
 }
 
-/* line 98, ../sass/custom.sass */
+/* line 143, ../sass/custom.sass */
 .qtip {
   font-size: 12px;
-  line-height: 1.4;
+  line-height: 1.35;
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
   -moz-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
   box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
 }
-/* line 99, ../sass/custom.sass */
+/* line 144, ../sass/custom.sass */
 .qtip canvas {
   display: none;
 }
-/* line 105, ../sass/custom.sass */
+/* line 150, ../sass/custom.sass */
 .qtip .title {
   font-weight: 600;
   font-size: 18px;
+  padding: 0;
+  margin: 0 0 0.5em 0;
+  color: #222222;
+  line-height: 1;
 }
-/* line 109, ../sass/custom.sass */
+/* line 158, ../sass/custom.sass */
 .qtip .numFemale, .qtip .numMale {
   font-size: 16px;
   font-weight: 700;
 }
-/* line 113, ../sass/custom.sass */
+/* line 162, ../sass/custom.sass */
+.qtip .year {
+  color: #999999;
+  font-weight: bold;
+  margin: 0 0 0.15em 0;
+}
+/* line 167, ../sass/custom.sass */
 .qtip .numFemale {
   color: #329004;
 }
-/* line 115, ../sass/custom.sass */
+/* line 169, ../sass/custom.sass */
 .qtip .numMale {
   color: #6a3a33;
 }

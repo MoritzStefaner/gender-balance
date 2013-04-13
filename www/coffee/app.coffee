@@ -1,21 +1,34 @@
 storage = Tabletop.init
 	key: '0AkTjJmB1VuOXdGV1NkRnU1Y4d2pJeHd6Y2wybTZ1ZVE'
 	wait: true
+	parseNumbers: true
+	#proxy: "http://gender-balance.local/data/"
+	simpleSheet: true
+	singleton: true
+	debug: true
+
+RATIO = "RATIO"
+TIME = "TIME"
+SERIES = "SERIES"
+NUM = "NUM"
+IDENTICAL = "IDENTICAL"
+
+sortMode = null
+scaling = null
+
+router = null
 
 # -----------------------------------
 
 class Event extends Backbone.Model
-	tabletop:
-		instance: storage
-		sheet: 'collection'
-	sync: Backbone.tabletopSync
 	initialize: (o)->
-		@.set "series", o["Conference Series"]
-		@.set "numMale", Number(o.nummale)
-		@.set "numFemale", Number(o.numfemale)
-		@.set "numTotal", Number(o.numfemale) + Number(o.nummale)
-		@.set "ratioFemale", Number(o.numfemale/(Number(o.numfemale) + Number(o.nummale)))
-		console.log @.toJSON()
+		console.log(o)
+		@.set "series", o["conferenceseries"]
+		@.set "date", o.year + "-" + o.month
+		@.set "numMale", o.nummale
+		@.set "numFemale", o.numfemale
+		@.set "numTotal", o.numfemale + o.nummale
+		@.set "ratioFemale", o.numfemale/(o.numfemale + o.nummale)
 
 class Events extends Backbone.Collection
 	tabletop:
@@ -24,23 +37,46 @@ class Events extends Backbone.Collection
 	sync: Backbone.tabletopSync
 	model: Event
 
+class Router extends Backbone.Router
+	routes: 
+		"*args": "path"
+
+	path: (x) =>
+		sortMode = x.split("/")[0] || RATIO
+		scaling = x.split("/")[1] || NUM
+		console.log sortMode, scaling
+		router.navigate("#{sortMode}/#{scaling}", 
+			trigger: false
+		)
+		updateVis()
+
 # -----------------------------------
 
-initVis = =>
-	console.log @events
-	data = @events.toJSON()
+w = 0
+h = 0
+padding = {}
+chartHeight = 0
+chartWidth = 0
 
-	totalNumSpeakers = d3.sum data, (x) -> x.numTotal
-	avg = d3.mean data, (x) -> x.ratioFemale
-	avgTotal = (d3.sum data, (x) -> x.numFemale) / totalNumSpeakers
+totalNumSpeakers = 0
+avg = 0
+avgTotal = 0
 
-	svg = d3.select(".chart")
-		.append("svg")
-		.attr(
-			width: "100%"
-			height: "100%"
-		)
+widthScale = null
+valueScale = null
 
+data = null
+
+getHeight = null
+posScale = null
+
+events = null
+
+averageLine = null
+averageLine2 = null
+averageLine3 = null
+
+calcSizes = () ->
 	w = $(".chart").width()
 	h = $(".chart").height()
 
@@ -53,26 +89,147 @@ initVis = =>
 	chartHeight = h - padding.top  - padding.bottom
 	chartWidth  = w - padding.left - padding.right
 
+updateScales = () ->
+	if scaling is NUM
+		posScale = d3.scale.linear()
+			.domain([0, totalNumSpeakers])
+			.range([0, chartHeight-data.length-20])
+		getHeight = (d) ->
+			posScale d.numTotal
+	else	
+		posScale = d3.scale.linear()
+			.domain([0, data.length])
+			.range([0, chartHeight-data.length-20])
+		getHeight = (d) ->
+			posScale 1
+	
+
+getSortFunc = (sortMode) ->
+	switch sortMode
+		when RATIO  
+			(x) -> x.ratioFemale
+		when TIME  
+			(x) -> x.date
+		when SERIES
+			(x) -> x.series
+		when NUM
+			(x) -> x.numTotal
+
+updatePositions = () ->
+	y = 0
+	for d in data
+		d.x = valueScale(d.ratioFemale)
+		d.y = y + 10
+		d.height =  getHeight d
+		
+		d.labelVisible = d.height>10
+		y += 1 + d.height
+
+
+updateVis = () =>
+	updateScales()
+	sortFunc = getSortFunc(sortMode)
+	data = _.sortBy data, sortFunc
+	events.order()
+	updatePositions()
+
+	# averageLine
+	# 	.transition()
+	# 	.duration(500)
+	# 	.style("opacity", ()->
+	# 		if scaling is NUM then 0 else 1
+	# 	)
+
+	# averageLine2
+	# 	.transition()
+	# 	.duration(500)
+	# 	.style("opacity", ()->
+	# 		if scaling is NUM then 1 else 0
+	# 	)
+
+	d3
+		.select("#scaling")
+		.selectAll("a")
+		.classed("active", ()->
+			d3.select(@).attr("data-value") is scaling
+		)
+
+	d3
+		.select("#sortMode")
+		.selectAll("a")
+		.classed("active", ()->
+			d3.select(@).attr("data-value") is sortMode
+		)
+
+	ani = events
+		.transition()
+		.duration(500)
+		.delay((d,i)->
+			d.y + d.x
+		)
+	
+	ani.attr(
+		transform: (d) -> 
+			"translate(#{d.x}, #{d.y})" 
+	)
+		
+
+	ani
+		.selectAll(".bg")
+		.attr(
+			height: (d) -> d.height 
+		)
+
+	ani
+		.selectAll(".female")
+		.attr(
+			height: (d) -> d.height 
+		)
+
+	ani
+		.selectAll(".male")
+		.attr(
+			height: (d) -> d.height 
+		)
+
+	ani
+		.selectAll(".male")
+		.attr(
+			height: (d) -> d.height 
+		)
+
+	ani
+		.selectAll("text")
+		.attr(
+			opacity: (d) -> if d.labelVisible then 1 else 0
+		)
+
+
+initVis = () =>
+	console.log @events
+	data = @eventsData.toJSON()
+
+	totalNumSpeakers = d3.sum data, (x) -> x.numTotal
+	avg = d3.mean data, (x) -> x.ratioFemale
+	avgTotal = (d3.sum data, (x) -> x.numFemale) / totalNumSpeakers
+
+	@svg = d3.select(".chart")
+		.append("svg")
+		.attr(
+			width: "100%"
+			height: "100%"
+		)
+	calcSizes()
+	
 	widthScale = d3.scale.linear()
 		.domain([0, 1])
 		.range([0, 20])
-
-	posScale = d3.scale.linear()
-		.domain([0, totalNumSpeakers])
-		.nice()
-		.range([0, chartHeight-data.length])
 
 	valueScale = d3.scale.linear()
 		.domain([0, 1])
 		.nice()
 		.range([0, chartWidth])
 
-	data = _.sortBy data, (x) -> x.ratioFemale
-
-	y = 0
-	for d in data
-		d.y = y
-		y += 1 + posScale d.numTotal
 
 	container = svg.append("g")
 		.attr(
@@ -89,7 +246,7 @@ initVis = =>
 			"#{Math.floor(d*100)}%"
 		)
 
-	
+	d3.select("#average1").text("#{Math.floor(avg*1000)/10.0}%")
 
 	averageLine = container.append("g")
 		.classed("averageLine", true)
@@ -110,7 +267,9 @@ initVis = =>
 		.attr(
 			x: 5
 		)
-		.text("Average ratio of women speakers at a conference")
+		.text("Average proportion of female speakers per conference")
+
+	d3.select("#average2").text("#{Math.floor(avgTotal*1000)/10.0}%")
 
 	averageLine2 = container.append("g")
 		.classed("averageLine", true)
@@ -131,12 +290,12 @@ initVis = =>
 		.attr(
 			x: 5
 		)
-		.text("Overall average of female speakers")
+		.text("Overall proportion of female speakers")
 
 	averageLine3 = container.append("g")
 		.classed("averageLine target", true)
 		.attr(
-			transform: "translate(#{valueScale(.25)}, #{chartHeight + 70})"
+			transform: "translate(#{valueScale(.2307)}, #{chartHeight + 70})"
 		)
 
 	averageLine3.append("line")
@@ -152,28 +311,7 @@ initVis = =>
 		.attr(
 			x: 5
 		)
-		.text("Percentage of women in datavisualization (*)")
-
-	# averageLine4 = container.append("g")
-	# 	.classed("averageLine target thin", true)
-	# 	.attr(
-	# 		transform: "translate(#{valueScale(.495)}, #{chartHeight + 70})"
-	# 	)
-
-	# averageLine4.append("line")
-	# 	.attr(
-	# 		x1: 0
-	# 		x2: 0
-	# 		y1: 0
-	# 		y2: -50
-	# 		# "stroke-dasharray": "2,2"
-	# 	)
-
-	# averageLine4.append("text")
-	# 	.attr(
-	# 		x: 5
-	# 	)
-	# 	.text("Percentage of women in population")
+		.text("Percentage of women in datavisualization")
 
 	container.append("rect")	
 		.attr(
@@ -206,7 +344,7 @@ initVis = =>
 
 	container.append("text")	
 		.attr(
-			x: -10 + valueScale 0
+			x: -20 + valueScale 0
 			y: -15
 		)
 		.classed("male legend", true)
@@ -214,7 +352,7 @@ initVis = =>
 
 	container.append("text")	
 		.attr(
-			x: 10 + valueScale 1
+			x: 20 + valueScale 1
 			y: -15
 			"text-anchor": "end"
 		)
@@ -233,8 +371,15 @@ initVis = =>
 
 	events = container.append("g")
 		.selectAll("g.event")
-		.data(data)
-		
+		.data(data, (d) -> d.event)
+		.sort((a,b) ->
+			if sortFunc(a) > sortFunc(b) then 1
+			if sortFunc(b) > sortFunc(b) then -1
+			if a.event > b.event then 1
+			if a.event < b.event then -1
+			0
+		)
+
 	enter = events.enter()
 		.append("g")
 		.classed(
@@ -243,11 +388,18 @@ initVis = =>
 		.attr(
 			"title": (d) -> 
 				"""
+					<div class="year">#{d.year}</div>
 					<div><span class="title">#{d.event}</span><div>
+					
 					<div><span class="numFemale">#{d.numFemale}</span> female speakers<div>
 					<div><span class="numMale">#{d.numMale}</span> male speakers<div>
 				"""
 		)
+
+	enter.attr(
+		transform: (d) -> 
+			"translate(-200, #{d.y})" 
+	)
 
 	enter.append("rect")
 		.classed("bg", true)
@@ -255,7 +407,6 @@ initVis = =>
 			x: -widthScale(.5)
 			y: 0
 			width: (d) -> widthScale 1
-			height: (d) -> posScale d.numTotal
 		)
 
 	enter.append("rect")
@@ -264,7 +415,6 @@ initVis = =>
 			x: (d) -> -widthScale(.5) - 1
 			y: 0
 			width: (d) -> widthScale(1-d.ratioFemale)
-			height: (d) -> posScale d.numTotal
 	)
 	
 	enter.append("rect")
@@ -273,44 +423,32 @@ initVis = =>
 			x: (d) -> - widthScale(.5)  + widthScale(1-d.ratioFemale)
 			y: 0
 			width: (d) -> widthScale d.ratioFemale
-			height: (d) -> posScale d.numTotal
 		)
-		
 
-	enter.append("text")
+	textGroup = enter
+		.append("g")
+		.classed("label", true)
 		.attr(
-			x: widthScale(.5) + 5
-			y: 8
-			visibility: (d) -> "hidden" if posScale (d.numTotal) < 20
+			transform: "translate(#{widthScale(.5) + 5}, #{11})"
 		)
+
+	textGroup.append("text")
 		.text((d)->
 			d.event
 		)
 		.style(
 			"stroke": "#FFF"
-			"stroke-width": "8px"
+			"stroke-width": "2px"
 		)
 
-	enter.append("text")
-		.attr(
-			x: widthScale(.5) + 5
-			y: 8
-			visibility: (d) -> "hidden" if posScale (d.numTotal) < 18
-		)
+	textGroup.append("text")
 		.text((d)->
 			d.event
 		)
 
-
-	events
-		.attr(
-			transform: (d) -> 
-				"translate(#{valueScale(d.ratioFemale)}, #{d.y+20})" 
-		)
-		.style("cursor", "pointer")
-	
+	updateVis()
+	events.style("cursor", "pointer")
 	events.each(() ->
-		console.log @
 		$(@).qtip(
 			content: true
 			position:
@@ -324,10 +462,46 @@ initVis = =>
 				classes: 'qtip-light'
 		)
 	)
+	d3
+		.select("#sortMode")
+		.selectAll("a")
+		.on("click", (d)->
+			 
+			sortMode = d3.select(@).attr "data-value"
+			router.navigate("#{sortMode}/#{scaling}",
+				trigger: true
+			)
+		)
+	d3
+		.select("#scaling")
+		.selectAll("a")
+		.on("click", (d)->
+			scaling = d3.select(@).attr "data-value"
+			router.navigate("#{sortMode}/#{scaling}",
+				trigger: true
+			)
+		)
 	@
+
+
 $ => 
 	console.log "* * *"
-	@events = new Events()
-	@events.fetch(
-		success: initVis
+
+	router = new Router()
+	
+	@eventsData = new Events()
+	@eventsData.fetch(
+		success: () =>
+			initVis()
+			Backbone.history.start()
 	)
+	$("a").each(()->
+		if $(@).attr("href")?.indexOf("#") is 0
+			$(@).click(()->
+				$("html, body").animate(
+					scrollTop: "0px"
+				)
+			)
+		)
+	
+	
