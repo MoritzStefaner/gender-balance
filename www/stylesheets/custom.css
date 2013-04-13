@@ -15,7 +15,7 @@ a {
 
 /* line 15, ../sass/custom.sass */
 body {
-  background: #f0f0f0 url(../img/debut_light_mod.png);
+  background: #f0f0f0 url(../img/bg.png);
 }
 
 /* line 18, ../sass/custom.sass */
@@ -162,10 +162,6 @@ svg .legendBorder {
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
-/* line 124, ../sass/custom.sass */
-svg .averageLine {
-  fill: #329004;
-}
 /* line 125, ../sass/custom.sass */
 svg .averageLine line {
   stroke: #43c205;
@@ -175,22 +171,28 @@ svg .averageLine line {
 }
 /* line 130, ../sass/custom.sass */
 svg .averageLine text {
-  font-weight: 600;
+  font-weight: 500;
+  fill: #329004;
 }
 /* line 135, ../sass/custom.sass */
-svg .averageLine.target {
-  fill: #666666;
-}
-/* line 136, ../sass/custom.sass */
 svg .averageLine.target line {
   stroke: #999999;
+}
+/* line 137, ../sass/custom.sass */
+svg .averageLine.target text {
+  fill: #666666;
 }
 /* line 139, ../sass/custom.sass */
 svg .averageLine.thin {
   opacity: 0.5;
 }
+/* line 142, ../sass/custom.sass */
+svg .averageLine .percentage {
+  font-weight: 600;
+  font-size: 15px;
+}
 
-/* line 143, ../sass/custom.sass */
+/* line 146, ../sass/custom.sass */
 .qtip {
   font-size: 12px;
   line-height: 1.35;
@@ -198,11 +200,11 @@ svg .averageLine.thin {
   -moz-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
   box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
 }
-/* line 144, ../sass/custom.sass */
+/* line 147, ../sass/custom.sass */
 .qtip canvas {
   display: none;
 }
-/* line 150, ../sass/custom.sass */
+/* line 153, ../sass/custom.sass */
 .qtip .title {
   font-weight: 600;
   font-size: 18px;
@@ -211,22 +213,22 @@ svg .averageLine.thin {
   color: #222222;
   line-height: 1;
 }
-/* line 158, ../sass/custom.sass */
+/* line 161, ../sass/custom.sass */
 .qtip .numFemale, .qtip .numMale {
   font-size: 16px;
   font-weight: 700;
 }
-/* line 162, ../sass/custom.sass */
+/* line 165, ../sass/custom.sass */
 .qtip .year {
   color: #999999;
   font-weight: bold;
   margin: 0 0 0.15em 0;
 }
-/* line 167, ../sass/custom.sass */
+/* line 170, ../sass/custom.sass */
 .qtip .numFemale {
   color: #329004;
 }
-/* line 169, ../sass/custom.sass */
+/* line 172, ../sass/custom.sass */
 .qtip .numMale {
   color: #6a3a33;
 }

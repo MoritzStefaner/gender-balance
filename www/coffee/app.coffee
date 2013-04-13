@@ -251,7 +251,7 @@ initVis = () =>
 	averageLine = container.append("g")
 		.classed("averageLine", true)
 		.attr(
-			transform: "translate(#{valueScale(avg)}, #{chartHeight + 130})"
+			transform: "translate(#{valueScale(avg)}, #{chartHeight + 135})"
 		)
 
 	averageLine.append("line")
@@ -269,12 +269,20 @@ initVis = () =>
 		)
 		.text("Average proportion of female speakers per conference")
 
+	averageLine.append("text")
+		.classed("percentage", true)
+		.attr(
+			x: 5
+			y: -15
+		)
+		.text(Math.floor(avg*1000)/10.0 +"%")
+
 	d3.select("#average2").text("#{Math.floor(avgTotal*1000)/10.0}%")
 
 	averageLine2 = container.append("g")
 		.classed("averageLine", true)
 		.attr(
-			transform: "translate(#{valueScale(avgTotal)}, #{chartHeight + 100})"
+			transform: "translate(#{valueScale(avgTotal)}, #{chartHeight + 110})"
 		)
 
 	averageLine2.append("line")
@@ -282,15 +290,26 @@ initVis = () =>
 			x1: 0
 			x2: 0
 			y1: 0
-			y2: -80
+			y2: -90
 			# "stroke-dasharray": "2,2"
 		)
 
 	averageLine2.append("text")
 		.attr(
 			x: 5
+			
 		)
 		.text("Overall proportion of female speakers")
+
+
+	averageLine2.append("text")
+		.classed("percentage", true)
+		.attr(
+			x: 5
+			y: -15
+		)
+		
+		.text(Math.floor(avgTotal*1000)/10.0 +"%")
 
 	averageLine3 = container.append("g")
 		.classed("averageLine target", true)
@@ -310,8 +329,17 @@ initVis = () =>
 	averageLine3.append("text")
 		.attr(
 			x: 5
+			
 		)
-		.text("Percentage of women in datavisualization")
+		.text("Proportion of women in datavisualization")
+
+	averageLine3.append("text")
+		.classed("percentage", true)
+		.attr(
+			x: 5
+			y: -15
+		)
+		.text(Math.floor(.2307*1000)/10.0 +"%")
 
 	container.append("rect")	
 		.attr(

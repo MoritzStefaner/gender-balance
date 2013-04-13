@@ -13,7 +13,7 @@ a
 	color: #1759b3
 
 body	
-	background: #F0F0F0 url(../img/debut_light_mod.png)
+	background: #F0F0F0 url(../img/bg.png)
 
 .row
 	background: #FFF
@@ -128,17 +128,20 @@ svg
 			shape-rendering: crispEdges
 			opacity: 1
 		text
-			font-weight: 600
-		
-		fill: darken($femaleColor, 10%)
+			font-weight: 500
+			fill: darken($femaleColor, 10%)
 
 		&.target
 			line
 				stroke: #999
-			fill: #666
+			text
+				fill: #666
 		&.thin
 			opacity: .5
 			
+		.percentage
+			font-weight: 600
+			font-size: 15px
 	
 .qtip
 	canvas
