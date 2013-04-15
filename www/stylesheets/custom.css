@@ -1,24 +1,25 @@
 /* line 6, ../sass/custom.sass */
 body, h1, h2, h3, h4, h5, h6 {
   font-family: "Source Sans Pro", sans;
+  color: #444444;
 }
 
-/* line 9, ../sass/custom.sass */
+/* line 10, ../sass/custom.sass */
 h1, h2, h3, h4, h5, h6 {
   color: #444444;
 }
 
-/* line 12, ../sass/custom.sass */
+/* line 13, ../sass/custom.sass */
 a {
-  color: #1759b3;
+  color: #177799;
 }
 
-/* line 15, ../sass/custom.sass */
+/* line 16, ../sass/custom.sass */
 body {
   background: #f0f0f0 url(../img/bg.png);
 }
 
-/* line 18, ../sass/custom.sass */
+/* line 19, ../sass/custom.sass */
 .row {
   background: white;
   border-left: 1px solid #dddddd;
@@ -27,70 +28,74 @@ body {
   padding: 0 1em;
 }
 
-/* line 26, ../sass/custom.sass */
+/* line 27, ../sass/custom.sass */
 .chartWrapper {
   padding: 2em 0;
 }
 
-/* line 29, ../sass/custom.sass */
+/* line 30, ../sass/custom.sass */
 h1 {
   margin-bottom: 0;
 }
 
-/* line 32, ../sass/custom.sass */
+/* line 33, ../sass/custom.sass */
 .male {
   color: #6a3a33;
 }
 
-/* line 35, ../sass/custom.sass */
+/* line 36, ../sass/custom.sass */
 .female {
   color: #43c205;
 }
 
-/* line 38, ../sass/custom.sass */
+/* line 39, ../sass/custom.sass */
 .legend {
   font-weight: bold;
   font-size: 14px;
   font-style: italic;
 }
-
 /* line 43, ../sass/custom.sass */
+.legend .female {
+  fill: #329004;
+}
+
+/* line 46, ../sass/custom.sass */
 .explanation {
   font-size: 12px;
   color: #777777;
 }
 
-/* line 47, ../sass/custom.sass */
+/* line 50, ../sass/custom.sass */
 .stat {
   font-weight: bold;
   color: #333333;
 }
 
-/* line 51, ../sass/custom.sass */
+/* line 54, ../sass/custom.sass */
 .subhead {
   font-style: italic;
 }
 
-/* line 54, ../sass/custom.sass */
+/* line 57, ../sass/custom.sass */
 .chart {
   width: 100%;
-  height: 700px;
+  height: 740px;
 }
 
-/* line 58, ../sass/custom.sass */
+/* line 61, ../sass/custom.sass */
 .controls {
   position: absolute;
   z-index: 2;
   top: 100px;
   right: 10px;
-  font-size: 0.8em;
+  font-size: 0.75em;
   padding: 0 1em 1em 1em;
   background: white;
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
   -moz-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
   box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
 }
-/* line 68, ../sass/custom.sass */
+/* line 71, ../sass/custom.sass */
 .controls div p, .controls div a {
   color: #555555;
   display: block;
@@ -100,135 +105,162 @@ h1 {
   line-height: 1;
   padding: 0.4em 0.4em;
 }
-/* line 76, ../sass/custom.sass */
+/* line 79, ../sass/custom.sass */
 .controls div p {
   margin-top: 1em;
   font-weight: bold;
 }
-/* line 79, ../sass/custom.sass */
+/* line 82, ../sass/custom.sass */
 .controls div a:hover {
   cursor: pointer;
   background: #ebec9e;
 }
-/* line 82, ../sass/custom.sass */
+/* line 85, ../sass/custom.sass */
 .controls div a.active {
   background: #e6e585;
   color: #222222;
 }
 
-/* line 86, ../sass/custom.sass */
+/* line 89, ../sass/custom.sass */
 svg {
   display: block;
   margin: 20 auto;
 }
-/* line 88, ../sass/custom.sass */
+/* line 91, ../sass/custom.sass */
 svg text {
   font-size: 11px;
   fill: #555555;
 }
-/* line 96, ../sass/custom.sass */
+/* line 99, ../sass/custom.sass */
 svg .tick text {
   fill: #444444;
   font-weight: 600;
 }
-/* line 99, ../sass/custom.sass */
+/* line 102, ../sass/custom.sass */
 svg .tick line {
   stroke: #999999;
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
-/* line 104, ../sass/custom.sass */
+/* line 107, ../sass/custom.sass */
 svg .domain {
   fill: none;
 }
-/* line 107, ../sass/custom.sass */
+/* line 110, ../sass/custom.sass */
 svg .male {
   fill: #6a3a33;
 }
-/* line 110, ../sass/custom.sass */
+/* line 113, ../sass/custom.sass */
 svg .female {
   fill: #43c205;
 }
-/* line 113, ../sass/custom.sass */
+/* line 116, ../sass/custom.sass */
 svg .bg {
   fill: white;
   stroke: white;
   stroke-width: 2;
 }
-/* line 118, ../sass/custom.sass */
+/* line 121, ../sass/custom.sass */
 svg .legendBorder {
   fill: white;
   stroke: #cccccc;
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
-/* line 125, ../sass/custom.sass */
+/* line 130, ../sass/custom.sass */
 svg .averageLine line {
   stroke: #43c205;
   stroke-width: 2;
   shape-rendering: crispEdges;
   opacity: 1;
 }
-/* line 130, ../sass/custom.sass */
+/* line 135, ../sass/custom.sass */
 svg .averageLine text {
   font-weight: 500;
   fill: #329004;
 }
-/* line 135, ../sass/custom.sass */
+/* line 140, ../sass/custom.sass */
 svg .averageLine.target line {
   stroke: #999999;
 }
-/* line 137, ../sass/custom.sass */
+/* line 142, ../sass/custom.sass */
 svg .averageLine.target text {
   fill: #666666;
 }
-/* line 139, ../sass/custom.sass */
+/* line 144, ../sass/custom.sass */
 svg .averageLine.thin {
   opacity: 0.5;
 }
-/* line 142, ../sass/custom.sass */
+/* line 147, ../sass/custom.sass */
 svg .averageLine .percentage {
   font-weight: 600;
   font-size: 15px;
 }
 
-/* line 146, ../sass/custom.sass */
+/* line 151, ../sass/custom.sass */
 .qtip {
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.35;
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
   -moz-box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
   box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 6px;
 }
-/* line 147, ../sass/custom.sass */
-.qtip canvas {
-  display: none;
+/* line 152, ../sass/custom.sass */
+.qtip .qtip-tip {
+  height: 0 !important;
+  display: none !important;
 }
-/* line 153, ../sass/custom.sass */
-.qtip .title {
-  font-weight: 600;
-  font-size: 18px;
-  padding: 0;
-  margin: 0 0 0.5em 0;
-  color: #222222;
-  line-height: 1;
+/* line 155, ../sass/custom.sass */
+.qtip .qtip-tip canvas {
+  display: none !important;
 }
-/* line 161, ../sass/custom.sass */
-.qtip .numFemale, .qtip .numMale {
-  font-size: 16px;
-  font-weight: 700;
+/* line 162, ../sass/custom.sass */
+.qtip .content {
+  padding: 0 !important;
 }
 /* line 165, ../sass/custom.sass */
+.qtip table, .qtip td, .qtip tr {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  vertical-align: bottom !important;
+  line-height: 12px;
+}
+/* line 172, ../sass/custom.sass */
+.qtip td {
+  padding: 0.25em;
+}
+/* line 175, ../sass/custom.sass */
+.qtip td.titleCell {
+  padding-right: 1.5em;
+  padding-left: 0em;
+  border-right: 1px solid #cccccc;
+}
+/* line 180, ../sass/custom.sass */
+.qtip .title {
+  font-weight: 600;
+  font-size: 16px;
+  color: #222222;
+  padding: 0.5em 0 0.15em 0;
+}
+/* line 187, ../sass/custom.sass */
+.qtip .numbers {
+  text-align: right;
+  font-size: 16px;
+  font-weight: 700;
+  padding-left: 0.5em;
+}
+/* line 193, ../sass/custom.sass */
 .qtip .year {
+  font-size: 10px;
   color: #999999;
   font-weight: bold;
-  margin: 0 0 0.15em 0;
 }
-/* line 170, ../sass/custom.sass */
+/* line 198, ../sass/custom.sass */
 .qtip .numFemale {
   color: #329004;
 }
-/* line 172, ../sass/custom.sass */
+/* line 200, ../sass/custom.sass */
 .qtip .numMale {
   color: #6a3a33;
 }

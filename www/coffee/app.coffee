@@ -5,7 +5,7 @@ storage = Tabletop.init
 	#proxy: "http://gender-balance.local/data/"
 	simpleSheet: true
 	singleton: true
-	debug: true
+	debug: false
 
 RATIO = "RATIO"
 TIME = "TIME"
@@ -22,7 +22,6 @@ router = null
 
 class Event extends Backbone.Model
 	initialize: (o)->
-		console.log(o)
 		@.set "series", o["conferenceseries"]
 		@.set "date", o.year + "-" + o.month
 		@.set "numMale", o.nummale
@@ -44,7 +43,6 @@ class Router extends Backbone.Router
 	path: (x) =>
 		sortMode = x.split("/")[0] || RATIO
 		scaling = x.split("/")[1] || NUM
-		console.log sortMode, scaling
 		router.navigate("#{sortMode}/#{scaling}", 
 			trigger: false
 		)
@@ -76,6 +74,9 @@ averageLine = null
 averageLine2 = null
 averageLine3 = null
 
+nicePercent = (x) ->
+	"#{(x*100).toFixed(1)}%"
+
 calcSizes = () ->
 	w = $(".chart").width()
 	h = $(".chart").height()
@@ -83,7 +84,7 @@ calcSizes = () ->
 	padding = 
 		top: 35
 		right: 20
-		bottom: 140
+		bottom: 160
 		left: 20
 
 	chartHeight = h - padding.top  - padding.bottom
@@ -104,16 +105,38 @@ updateScales = () ->
 			posScale 1
 	
 
-getSortFunc = (sortMode) ->
+sortFunc = (a,b) ->
 	switch sortMode
-		when RATIO  
-			(x) -> x.ratioFemale
+		when RATIO  	
+			if a.ratioFemale > b.ratioFemale then return 1
+			if a.ratioFemale < b.ratioFemale then return -1
+			if a.series > b.series then return 1
+			if a.series < b.series then return -1
+			if a.date > b.date then return 1
+			if a.date < b.date then return -1
+			0
 		when TIME  
-			(x) -> x.date
+			if a.date > b.date then return 1
+			if a.date < b.date then return -1
+			if a.event > b.event then return 1
+			if a.event < b.event then return -1
+			0
 		when SERIES
-			(x) -> x.series
+			if a.series > b.series then return 1
+			if a.series < b.series then return -1
+			if a.date > b.date then return 1
+			if a.date < b.date then return -1
+			if a.event > b.event then return 1
+			if a.event < b.event then return -1
+			0
 		when NUM
-			(x) -> x.numTotal
+			if a.numTotal > b.numTotal then return 1
+			if a.numTotal < b.numTotal then return -1
+			if a.date > b.date then return 1
+			if a.date < b.date then return -1
+			if a.event > b.event then return 1
+			if a.event < b.event then return -1
+			0
 
 updatePositions = () ->
 	y = 0
@@ -128,9 +151,7 @@ updatePositions = () ->
 
 updateVis = () =>
 	updateScales()
-	sortFunc = getSortFunc(sortMode)
-	data = _.sortBy data, sortFunc
-	events.order()
+	data = data.sort(sortFunc)
 	updatePositions()
 
 	# averageLine
@@ -206,7 +227,7 @@ updateVis = () =>
 
 
 initVis = () =>
-	console.log @events
+
 	data = @eventsData.toJSON()
 
 	totalNumSpeakers = d3.sum data, (x) -> x.numTotal
@@ -238,20 +259,20 @@ initVis = () =>
 
 	xAxis = d3.svg.axis()
 		.scale(valueScale)
-		.tickSize(chartHeight,0,chartHeight)
-		.tickPadding(10)
-		.ticks(10)
+		.tickSize(chartHeight-3)
+		.tickPadding(13)
+		.ticks(if w>600 then 10 else 5)
 		.orient("bottom")
 		.tickFormat((d,i) ->
 			"#{Math.floor(d*100)}%"
 		)
 
-	d3.select("#average1").text("#{Math.floor(avg*1000)/10.0}%")
+	d3.select("#average1").text(nicePercent avg)
 
 	averageLine = container.append("g")
 		.classed("averageLine", true)
 		.attr(
-			transform: "translate(#{valueScale(avg)}, #{chartHeight + 135})"
+			transform: "translate(#{valueScale(avg)}, #{chartHeight + 150})"
 		)
 
 	averageLine.append("line")
@@ -259,7 +280,7 @@ initVis = () =>
 			x1: 0
 			x2: 0
 			y1: 0
-			y2: -110
+			y2: -130
 			#"stroke-dasharray": "2,2"
 		)
 
@@ -275,9 +296,9 @@ initVis = () =>
 			x: 5
 			y: -15
 		)
-		.text(Math.floor(avg*1000)/10.0 +"%")
+		.text(nicePercent avg)
 
-	d3.select("#average2").text("#{Math.floor(avgTotal*1000)/10.0}%")
+	d3.select("#average2").text(nicePercent avgTotal)
 
 	averageLine2 = container.append("g")
 		.classed("averageLine", true)
@@ -309,7 +330,7 @@ initVis = () =>
 			y: -15
 		)
 		
-		.text(Math.floor(avgTotal*1000)/10.0 +"%")
+		.text(nicePercent avgTotal)
 
 	averageLine3 = container.append("g")
 		.classed("averageLine target", true)
@@ -339,12 +360,12 @@ initVis = () =>
 			x: 5
 			y: -15
 		)
-		.text(Math.floor(.2307*1000)/10.0 +"%")
+		.text(nicePercent .2307)
 
 	container.append("rect")	
 		.attr(
 			x: -padding.left-3
-			y: -padding.top
+			y: -padding.top-1
 			width: w+6
 			height: padding.top-5
 		)
@@ -399,28 +420,41 @@ initVis = () =>
 
 	events = container.append("g")
 		.selectAll("g.event")
-		.data(data, (d) -> d.event)
-		.sort((a,b) ->
-			if sortFunc(a) > sortFunc(b) then 1
-			if sortFunc(b) > sortFunc(b) then -1
-			if a.event > b.event then 1
-			if a.event < b.event then -1
-			0
-		)
+		.data(data, (d) -> d.event)	
+
 
 	enter = events.enter()
 		.append("g")
 		.classed(
 			"event": true
 		)
+		
 		.attr(
 			"title": (d) -> 
 				"""
-					<div class="year">#{d.year}</div>
-					<div><span class="title">#{d.event}</span><div>
-					
-					<div><span class="numFemale">#{d.numFemale}</span> female speakers<div>
-					<div><span class="numMale">#{d.numMale}</span> male speakers<div>
+					<table>
+						
+						<tr >
+							<td class="titleCell" rowspan="2">
+								<div class="year">#{d.year}</div>
+								<div class="title">#{d.event}</div>
+							</td>
+							<td class="numbers">
+								<span class="numFemale">#{d.numFemale}</span>
+							</td>
+							<td class="labels">
+								female speakers
+							</td>
+						</tr>
+						<tr>
+							<td class="numbers">
+								<span class="numMale">#{d.numMale}</span>
+							</td>
+							<td class="labels">
+								male speakers
+							</td>
+						</tr>
+					</table>
 				"""
 		)
 
@@ -480,7 +514,7 @@ initVis = () =>
 		$(@).qtip(
 			content: true
 			position:
-				my: "left center"
+				my: "left bottom"
 				at: "right center"
 				target: "mouse"
 				adjust:
@@ -490,6 +524,34 @@ initVis = () =>
 				classes: 'qtip-light'
 		)
 	)
+
+	events.on("click", (d)->
+		window.open(d.url) unless !d.url
+	)
+
+
+	# events.on("mouseover", (d)->
+	# 	sameSeries = _.filter(data, (x) -> x.series is d.series)
+	# 	if sameSeries?.length>1
+	# 		events
+	# 		.transition()
+	# 		.delay(500)
+	# 		.duration(500)
+	# 		.style("opacity", (x)->
+	# 			if x.series is d.series then 1 else 0.4
+	# 		)
+	# 	else 
+	# 		events.style("opacity", 1)
+	# )
+
+	# events.on("mouseout", (d)->
+	# 	sameSeries = _.filter data, (x) -> x.series is d.series
+	# 	if sameSeries?.length>1
+	# 		events
+	# 		.transition().duration(250)
+	# 		.style("opacity", 1)
+	# )
+
 	d3
 		.select("#sortMode")
 		.selectAll("a")
@@ -513,7 +575,6 @@ initVis = () =>
 
 
 $ => 
-	console.log "* * *"
 
 	router = new Router()
 	
@@ -523,6 +584,7 @@ $ =>
 			initVis()
 			Backbone.history.start()
 	)
+
 	$("a").each(()->
 		if $(@).attr("href")?.indexOf("#") is 0
 			$(@).click(()->

@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width" />
   <title>Gender balance visualization</title>
 
-  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="stylesheets/normalize.css" />
   <link rel="stylesheet" href="stylesheets/app.css" />
@@ -41,7 +41,7 @@
 					<div id="sortMode">
 						<p>Sort by: </p>
 						<a data-value="RATIO" class="active">Proportion of female speakers</a>		
-						<a data-value="NUM">Number of speakers</a>		
+						<a data-value="NUM">Total number of speakers</a>		
 						<a data-value="SERIES">Conference series</a>
 						<a data-value="TIME">Date</a>		
 					</div>	
@@ -60,7 +60,7 @@
 					After a few discussions on gender balance in data visualization (and related fields such as information graphics and creative code), I simply decided to collect some data to find out how many women we actually have in the field, and how well they are represented at conferences. 
 				</p>
 				<p>
-					To this end, I manually counted the number of male and female speakers at conferences (with a little help from my <a href="http://driven-by-data.net">friends</a>) in a <a href="https://docs.google.com/spreadsheet/ccc?key=0AkTjJmB1VuOXdGV1NkRnU1Y4d2pJeHd6Y2wybTZ1ZVE#gid=0">Google spreadsheet</a> and visualized the data with d3.js 
+					To this end, I manually counted the number of male and female speakers at conferences (with a little help from my <a href="http://driven-by-data.net">friends</a>) in a <a href="https://docs.google.com/spreadsheet/ccc?key=0AkTjJmB1VuOXdGV1NkRnU1Y4d2pJeHd6Y2wybTZ1ZVE#gid=0">Google spreadsheet</a> and visualized the data with <a href="http://d3js.org">d3.js</a> 
 				</p>
 
 			</div>
@@ -83,7 +83,7 @@
 					 	</li>
 
 
-					 	<li>The estimate of the average number of women in data visualization overall: <span class="stat" id="average3">23.07%</span>
+					 	<li>The estimate of the average number of women in data visualization overall: <span class="stat" id="average3">23.1%</span>
 					 	<p class="explanation">
 					 		From Andy Kirk's <a href="http://www.visualisingdata.com/index.php/2013/03/1578-responses-to-the-first-data-visualisation-census/">data visualization census</a>. I counted only the 279 women and 930 men which stated they pursue data visualization <em>full time</em> or <em>as part of their job</em>.
 					 	</p>
@@ -93,10 +93,10 @@
 				</p>
 
 				<h5>
-					So, we are quite close to the average number of women in the field. All good, right?
+					So, overall, we are quite close to the average number of women in the field. All good, right?
 				</h5>
 				<p>
-					Hmm, again: there is on average only 1 woman out of 7 speakers on stage at a random conference. And even if the number of speakers would match the number of professionals - why should we be happy with staying at 1 out of 4? Personally, I would love to see much more women in the field overall - ideally half of the people, right?! Let's make this happen.
+					Hmm, well&mdash;still, there is on average only 1 woman out of 7 speakers on stage if you randomly pick an individual event. And even if the number of speakers would match the number of professionals - why should we be happy with staying at 1 out of 4? Personally, I would love to see much more women in the field overall - ideally half of the people, right?! Let's make this happen.
 					<p class="explanation"> 
 					(For instance, by having more women speak at conferences.)
 					</p>
@@ -127,6 +127,19 @@
 				<p>
 					<em><a href="http://moritz.stefaner.eu">Moritz Stefaner</a>, 2013</em>
 				</p>
+
+				<hr>
+
+				<p>
+
+				  <div>
+					  	<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="moritz_stefaner">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script> 
+					
+						<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fmoritz.stefaner.eu%2Fprojects%2Fgender-balance%2F&amp;layout=button_count&amp;show_faces=false&amp;width=600&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:120px; height:21px;" allowTransparency="true"></iframe>
+					</div>
+				</p>
+
+  				
 			</div>
 		</div>
 	</div>	
