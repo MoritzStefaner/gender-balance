@@ -74,6 +74,18 @@ averageLine = null
 averageLine2 = null
 averageLine3 = null
 
+xAxis = null
+xAxisLegend = null
+legendBorder = null
+legendBorder2 = null
+equalLabel = null
+femaleLabel = null
+verticalLabels = null
+verticalLabelsData = []
+svg = null
+
+sortingChanged = true
+
 nicePercent = (x) ->
 	"#{(x*100).toFixed(1)}%"
 
@@ -91,6 +103,61 @@ calcSizes = () ->
 	chartWidth  = w - padding.left - padding.right
 
 updateScales = () ->
+	calcSizes()
+	
+	valueScale
+		.range([0, chartWidth])
+
+	xAxis
+		.scale(valueScale)
+		.ticks(if w>600 then 10 else 5)
+
+	xAxisLegend.call xAxis
+
+	legendBorder?.attr(
+			width: w+6
+		)
+
+	legendBorder2?.attr(
+			width: w+6
+		)
+
+	femaleLabel?.attr(
+			x: 20 + valueScale 1
+		)
+
+	equalLabel?.attr(
+			x: valueScale .5
+		).style(
+			opacity: if w>400 then 1 else 0
+		)
+
+	svg
+		.selectAll(".tick")
+		.transition()
+		.duration(500)
+		.attr(
+			transform: (d)-> 
+				"translate(#{valueScale(d)}, 0)"
+		)
+		.style(
+			opacity: (_,i) -> if w>600 or (i%2) is 0 then 1 else 0
+		)		
+
+	averageLine.attr(
+			transform: "translate(#{valueScale(avg)}, #{chartHeight + 150})"
+		)
+
+	averageLine2.attr(
+			transform: "translate(#{valueScale(avgTotal)}, #{chartHeight + 110})"
+		)
+
+	averageLine3.attr(
+			transform: "translate(#{valueScale(.2307)}, #{chartHeight + 70})"
+		)
+
+	
+
 	if scaling is NUM
 		posScale = d3.scale.linear()
 			.domain([0, totalNumSpeakers])
@@ -140,6 +207,8 @@ sortFunc = (a,b) ->
 
 updatePositions = () ->
 	y = 0
+	verticalLabelsData = []
+	lastValue = null
 	for d in data
 		d.x = valueScale(d.ratioFemale)
 		d.y = y + 10
@@ -147,6 +216,24 @@ updatePositions = () ->
 		
 		d.labelVisible = d.height>10
 		y += 1 + d.height
+
+		if verticalLabelsData.length
+			verticalLabelsData[verticalLabelsData.length-1].height = d.y - verticalLabelsData[verticalLabelsData.length-1].y
+
+		switch sortMode
+			when TIME  
+				if d.year isnt lastValue
+					verticalLabelsData.push 
+						label: d.year
+						y: d.y
+					lastValue = d.year
+				
+			when SERIES
+				if d.series isnt lastValue
+					verticalLabelsData.push 
+						label: d.series
+						y: d.y
+					lastValue = d.series
 
 
 updateVis = () =>
@@ -225,8 +312,94 @@ updateVis = () =>
 			opacity: (d) -> if d.labelVisible then 1 else 0
 		)
 
+	verticalLabels.attr(
+		transform: "translate(#{w-220}, 0)"
+	)
+	
+	vl = verticalLabels.selectAll("g")
+		.data(verticalLabelsData, (d) -> d.label)
+
+		
+	enter = vl.enter()
+		.append("g")
+		.classed("verticalLabel", true)
+
+	enter
+		.attr(
+			"transform": (d)->"translate(0, #{h/2 + 2*(d.y-h/2)})"
+		)
+		.style(
+			opacity: 0
+		)
+
+	enter.append("text")
+		.text((d)->d.label
+		)
+		.attr(
+			"transform": "translate(-3, 12)"
+			"text-anchor": "end"
+		)
+
+
+	enter.append("line")
+		.attr(
+			x1: -2000
+			x2: 0
+			y1: 0
+			y2: 0
+		)
+		.attr(
+			"stroke-dasharray": "1,1"
+		)
+
+	# enter.append("rect")
+	# 	.attr(
+	# 		x: -w
+	# 		y: 0
+	# 		width: w
+	# 		height: (d)->d.height
+	# 	)
+	# 	.style(
+	# 		fill: "#000"
+	# 		opacity: (_,i) -> (i%2)*.1 + .05
+	# 	)
+
+
+
+	vl
+		.selectAll("text")
+		.text((d)->
+			if d.height >15
+				d.label
+			else
+				""
+		)
+	vl
+		.transition()
+		.duration(500)
+		.delay(if sortingChanged then 1500 else (d)->d.y)
+		.attr(
+			transform: (d)->"translate(0, #{d.y})"
+		)
+		.style(
+			opacity: 1
+		)
+
+	vl.exit()
+		.transition()
+		.duration(500)
+		.attr(
+			transform: (d)->"translate(0, #{h/2 + 2*(d.y-h/2)})"
+		)
+		.style(
+			opacity: 0
+		)
+		.remove()
+
 
 initVis = () =>
+
+	$(".chart").watch(["width"], updateVis)
 
 	data = @eventsData.toJSON()
 
@@ -234,7 +407,7 @@ initVis = () =>
 	avg = d3.mean data, (x) -> x.ratioFemale
 	avgTotal = (d3.sum data, (x) -> x.numFemale) / totalNumSpeakers
 
-	@svg = d3.select(".chart")
+	svg = d3.select(".chart")
 		.append("svg")
 		.attr(
 			width: "100%"
@@ -248,9 +421,7 @@ initVis = () =>
 
 	valueScale = d3.scale.linear()
 		.domain([0, 1])
-		.nice()
 		.range([0, chartWidth])
-
 
 	container = svg.append("g")
 		.attr(
@@ -261,11 +432,12 @@ initVis = () =>
 		.scale(valueScale)
 		.tickSize(chartHeight-3)
 		.tickPadding(13)
-		.ticks(if w>600 then 10 else 5)
+		.ticks(10)
 		.orient("bottom")
 		.tickFormat((d,i) ->
 			"#{Math.floor(d*100)}%"
 		)
+
 
 	d3.select("#average1").text(nicePercent avg)
 
@@ -281,7 +453,7 @@ initVis = () =>
 			x2: 0
 			y1: 0
 			y2: -130
-			#"stroke-dasharray": "2,2"
+			
 		)
 
 	averageLine.append("text")
@@ -312,7 +484,7 @@ initVis = () =>
 			x2: 0
 			y1: 0
 			y2: -90
-			# "stroke-dasharray": "2,2"
+			
 		)
 
 	averageLine2.append("text")
@@ -344,7 +516,7 @@ initVis = () =>
 			x2: 0
 			y1: 0
 			y2: -50
-			# "stroke-dasharray": "2,2"
+			
 		)
 
 	averageLine3.append("text")
@@ -362,7 +534,7 @@ initVis = () =>
 		)
 		.text(nicePercent .2307)
 
-	container.append("rect")	
+	legendBorder = container.append("rect")	
 		.attr(
 			x: -padding.left-3
 			y: -padding.top-1
@@ -371,7 +543,7 @@ initVis = () =>
 		)
 		.classed("legendBorder", true)
 
-	container.append("rect")	
+	legendBorder2 = container.append("rect")	
 		.attr(
 			x: -padding.left-3
 			y: chartHeight-1
@@ -379,17 +551,22 @@ initVis = () =>
 			height: 30
 		)
 		.classed("legendBorder", true)
+
+
+	verticalLabels = container.append("g")	
+
 	
-	container.append("g")
+	xAxisLegend = container.append("g")
 		.classed(
 			"axisLegend x": true
 		)
 		.call(xAxis)
 		.selectAll("line")
 		.attr(
-			
-			"stroke-dasharray": "1,3"
+			"stroke-dasharray": "1,4"
 		)
+
+	xAxisLegend.selectAll(".tick").style("opacity", 0)
 
 	container.append("text")	
 		.attr(
@@ -399,7 +576,7 @@ initVis = () =>
 		.classed("male legend", true)
 		.text("Only male speakers")
 
-	container.append("text")	
+	femaleLabel = container.append("text")	
 		.attr(
 			x: 20 + valueScale 1
 			y: -15
@@ -409,7 +586,7 @@ initVis = () =>
 		.classed("female legend", true)
 		.text("Only female speakers")
 
-	container.append("text")	
+	equalLabel = container.append("text")	
 		.attr(
 			x: valueScale .5
 			y: -15
@@ -443,7 +620,7 @@ initVis = () =>
 								<span class="numFemale">#{d.numFemale}</span>
 							</td>
 							<td class="labels">
-								female speakers
+								female speaker#{if d.numFemale isnt 1 then "s" else ""}
 							</td>
 						</tr>
 						<tr>
@@ -451,7 +628,7 @@ initVis = () =>
 								<span class="numMale">#{d.numMale}</span>
 							</td>
 							<td class="labels">
-								male speakers
+								male speaker#{if d.numMale isnt 1 then "s" else ""}
 							</td>
 						</tr>
 					</table>
@@ -556,7 +733,7 @@ initVis = () =>
 		.select("#sortMode")
 		.selectAll("a")
 		.on("click", (d)->
-			 
+			sortingChanged = true
 			sortMode = d3.select(@).attr "data-value"
 			router.navigate("#{sortMode}/#{scaling}",
 				trigger: true
@@ -566,6 +743,7 @@ initVis = () =>
 		.select("#scaling")
 		.selectAll("a")
 		.on("click", (d)->
+			sortingChanged = false
 			scaling = d3.select(@).attr "data-value"
 			router.navigate("#{sortMode}/#{scaling}",
 				trigger: true

@@ -15,6 +15,7 @@ a
 
 body	
 	background: #F0F0F0 url(../img/bg.png)
+	min-width: 600px
 
 .row
 	background: #FFF
@@ -26,6 +27,7 @@ body
 
 .chartWrapper
 	padding: 2em 0
+
 
 h1
 	margin-bottom: 0
@@ -50,6 +52,16 @@ h1
 .stat
 	font-weight: bold
 	color: #333
+
+.verticalLabel
+	text
+		font-weight: bold
+		fill: #5a5a30
+	line
+		stroke: #5a5a30
+		shape-rendering: crispEdges
+		opacity: .33
+		stroke-width: 1
 
 .subhead
 	font-style: italic
@@ -156,7 +168,7 @@ svg
 			display: none !important
 
 	font-size: 11px
-	line-height: 1.35
+	line-height: 18px
 	@include box-shadow(rgba(#000000,.2) 1px 1px 6px)
 
 	.content
@@ -167,29 +179,37 @@ svg
 		padding: 0
 		margin: 0
 		vertical-align: bottom !important
-		line-height: 12px
+		line-height: 18px
+		background: #FFF
 
 	td
-		padding: 0.25em
+		padding: 0.1em 0.25em
 
 		&.titleCell
-			padding-right: 1.5em
-			padding-left: 0em
+			padding: 0 1.5em 0 0 
 			border-right: 1px solid #CCC
+
+
 
 	.title		
 		font-weight: 600
 		font-size: 16px
 		color: #222
-		padding: .5em 0 .15em 0
+		padding: 0
 		
-
+	
 	.numbers
 		text-align: right
 		font-size: 16px
 		font-weight: 700
 		padding-left: .5em
 	
+	.title, .numbers
+		padding-bottom: .2em
+
+	.labels
+		width: 8em
+
 	.year
 		font-size: 10px
 		color: #999
