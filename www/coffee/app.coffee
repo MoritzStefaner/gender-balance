@@ -86,316 +86,6 @@ svg = null
 
 sortingChanged = true
 
-nicePercent = (x) ->
-	"#{(x*100).toFixed(1)}%"
-
-calcSizes = () ->
-	w = $(".chart").width()
-	h = $(".chart").height()
-
-	padding = 
-		top: 35
-		right: 20
-		bottom: 160
-		left: 20
-
-	chartHeight = h - padding.top  - padding.bottom
-	chartWidth  = w - padding.left - padding.right
-
-updateScales = () ->
-	calcSizes()
-	
-	valueScale
-		.range([0, chartWidth])
-
-	xAxis
-		.scale(valueScale)
-		.ticks(if w>600 then 10 else 5)
-
-	xAxisLegend.call xAxis
-
-	legendBorder?.attr(
-			width: w+6
-		)
-
-	legendBorder2?.attr(
-			width: w+6
-		)
-
-	femaleLabel?.attr(
-			x: 20 + valueScale 1
-		)
-
-	equalLabel?.attr(
-			x: valueScale .5
-		).style(
-			opacity: if w>400 then 1 else 0
-		)
-
-	svg
-		.selectAll(".tick")
-		.transition()
-		.duration(500)
-		.attr(
-			transform: (d)-> 
-				"translate(#{valueScale(d)}, 0)"
-		)
-		.style(
-			opacity: (_,i) -> if w>600 or (i%2) is 0 then 1 else 0
-		)		
-
-	averageLine.attr(
-			transform: "translate(#{valueScale(avg)}, #{chartHeight + 150})"
-		)
-
-	averageLine2.attr(
-			transform: "translate(#{valueScale(avgTotal)}, #{chartHeight + 110})"
-		)
-
-	averageLine3.attr(
-			transform: "translate(#{valueScale(.2307)}, #{chartHeight + 70})"
-		)
-
-	
-
-	if scaling is NUM
-		posScale = d3.scale.linear()
-			.domain([0, totalNumSpeakers])
-			.range([0, chartHeight-data.length-20])
-		getHeight = (d) ->
-			posScale d.numTotal
-	else	
-		posScale = d3.scale.linear()
-			.domain([0, data.length])
-			.range([0, chartHeight-data.length-20])
-		getHeight = (d) ->
-			posScale 1
-	
-
-sortFunc = (a,b) ->
-	switch sortMode
-		when RATIO  	
-			if a.ratioFemale > b.ratioFemale then return 1
-			if a.ratioFemale < b.ratioFemale then return -1
-			if a.series > b.series then return 1
-			if a.series < b.series then return -1
-			if a.date > b.date then return 1
-			if a.date < b.date then return -1
-			0
-		when TIME  
-			if a.date > b.date then return 1
-			if a.date < b.date then return -1
-			if a.event > b.event then return 1
-			if a.event < b.event then return -1
-			0
-		when SERIES
-			if a.series > b.series then return 1
-			if a.series < b.series then return -1
-			if a.date > b.date then return 1
-			if a.date < b.date then return -1
-			if a.event > b.event then return 1
-			if a.event < b.event then return -1
-			0
-		when NUM
-			if a.numTotal > b.numTotal then return 1
-			if a.numTotal < b.numTotal then return -1
-			if a.date > b.date then return 1
-			if a.date < b.date then return -1
-			if a.event > b.event then return 1
-			if a.event < b.event then return -1
-			0
-
-updatePositions = () ->
-	y = 0
-	verticalLabelsData = []
-	lastValue = null
-	for d in data
-		d.x = valueScale(d.ratioFemale)
-		d.y = y + 10
-		d.height =  getHeight d
-		
-		d.labelVisible = d.height>10
-		y += 1 + d.height
-
-		if verticalLabelsData.length
-			verticalLabelsData[verticalLabelsData.length-1].height = d.y - verticalLabelsData[verticalLabelsData.length-1].y
-
-		switch sortMode
-			when TIME  
-				if d.year isnt lastValue
-					verticalLabelsData.push 
-						label: d.year
-						y: d.y
-					lastValue = d.year
-				
-			when SERIES
-				if d.series isnt lastValue
-					verticalLabelsData.push 
-						label: d.series
-						y: d.y
-					lastValue = d.series
-
-
-updateVis = () =>
-	updateScales()
-	data = data.sort(sortFunc)
-	updatePositions()
-
-	# averageLine
-	# 	.transition()
-	# 	.duration(500)
-	# 	.style("opacity", ()->
-	# 		if scaling is NUM then 0 else 1
-	# 	)
-
-	# averageLine2
-	# 	.transition()
-	# 	.duration(500)
-	# 	.style("opacity", ()->
-	# 		if scaling is NUM then 1 else 0
-	# 	)
-
-	d3
-		.select("#scaling")
-		.selectAll("a")
-		.classed("active", ()->
-			d3.select(@).attr("data-value") is scaling
-		)
-
-	d3
-		.select("#sortMode")
-		.selectAll("a")
-		.classed("active", ()->
-			d3.select(@).attr("data-value") is sortMode
-		)
-
-	ani = events
-		.transition()
-		.duration(500)
-		.delay((d,i)->
-			d.y + d.x
-		)
-	
-	ani.attr(
-		transform: (d) -> 
-			"translate(#{d.x}, #{d.y})" 
-	)
-		
-
-	ani
-		.selectAll(".bg")
-		.attr(
-			height: (d) -> d.height 
-		)
-
-	ani
-		.selectAll(".female")
-		.attr(
-			height: (d) -> d.height 
-		)
-
-	ani
-		.selectAll(".male")
-		.attr(
-			height: (d) -> d.height 
-		)
-
-	ani
-		.selectAll(".male")
-		.attr(
-			height: (d) -> d.height 
-		)
-
-	ani
-		.selectAll("text")
-		.attr(
-			opacity: (d) -> if d.labelVisible then 1 else 0
-		)
-
-	verticalLabels.attr(
-		transform: "translate(#{w-220}, 0)"
-	)
-	
-	vl = verticalLabels.selectAll("g")
-		.data(verticalLabelsData, (d) -> d.label)
-
-		
-	enter = vl.enter()
-		.append("g")
-		.classed("verticalLabel", true)
-
-	enter
-		.attr(
-			"transform": (d)->"translate(0, #{h/2 + 2*(d.y-h/2)})"
-		)
-		.style(
-			opacity: 0
-		)
-
-	enter.append("text")
-		.text((d)->d.label
-		)
-		.attr(
-			"transform": "translate(-3, 12)"
-			"text-anchor": "end"
-		)
-
-
-	enter.append("line")
-		.attr(
-			x1: -2000
-			x2: 0
-			y1: 0
-			y2: 0
-		)
-		.attr(
-			"stroke-dasharray": "1,1"
-		)
-
-	# enter.append("rect")
-	# 	.attr(
-	# 		x: -w
-	# 		y: 0
-	# 		width: w
-	# 		height: (d)->d.height
-	# 	)
-	# 	.style(
-	# 		fill: "#000"
-	# 		opacity: (_,i) -> (i%2)*.1 + .05
-	# 	)
-
-
-
-	vl
-		.selectAll("text")
-		.text((d)->
-			if d.height >15
-				d.label
-			else
-				""
-		)
-	vl
-		.transition()
-		.duration(500)
-		.delay(if sortingChanged then 1500 else (d)->d.y)
-		.attr(
-			transform: (d)->"translate(0, #{d.y})"
-		)
-		.style(
-			opacity: 1
-		)
-
-	vl.exit()
-		.transition()
-		.duration(500)
-		.attr(
-			transform: (d)->"translate(0, #{h/2 + 2*(d.y-h/2)})"
-		)
-		.style(
-			opacity: 0
-		)
-		.remove()
-
 
 initVis = () =>
 
@@ -707,29 +397,6 @@ initVis = () =>
 		window.open(d.url) unless !d.url
 	)
 
-
-	# events.on("mouseover", (d)->
-	# 	sameSeries = _.filter(data, (x) -> x.series is d.series)
-	# 	if sameSeries?.length>1
-	# 		events
-	# 		.transition()
-	# 		.delay(500)
-	# 		.duration(500)
-	# 		.style("opacity", (x)->
-	# 			if x.series is d.series then 1 else 0.4
-	# 		)
-	# 	else 
-	# 		events.style("opacity", 1)
-	# )
-
-	# events.on("mouseout", (d)->
-	# 	sameSeries = _.filter data, (x) -> x.series is d.series
-	# 	if sameSeries?.length>1
-	# 		events
-	# 		.transition().duration(250)
-	# 		.style("opacity", 1)
-	# )
-
 	d3
 		.select("#sortMode")
 		.selectAll("a")
@@ -751,6 +418,318 @@ initVis = () =>
 			)
 		)
 	@
+
+
+nicePercent = (x) ->
+	"#{(x*100).toFixed(1)}%"
+
+calcSizes = () ->
+	w = $(".chart").width()
+	h = $(".chart").height()
+
+	padding = 
+		top: 35
+		right: 20
+		bottom: 160
+		left: 20
+
+	chartHeight = h - padding.top  - padding.bottom
+	chartWidth  = w - padding.left - padding.right
+
+updateScales = () ->
+	calcSizes()
+	
+	valueScale
+		.range([0, chartWidth])
+
+	xAxis
+		.scale(valueScale)
+		.ticks(if w>600 then 10 else 5)
+
+	xAxisLegend.call xAxis
+
+	legendBorder?.attr(
+			width: w+6
+		)
+
+	legendBorder2?.attr(
+			width: w+6
+		)
+
+	femaleLabel?.attr(
+			x: 20 + valueScale 1
+		)
+
+	equalLabel?.attr(
+			x: valueScale .5
+		).style(
+			opacity: if w>400 then 1 else 0
+		)
+
+	svg
+		.selectAll(".tick")
+		.transition()
+		.duration(500)
+		.attr(
+			transform: (d)-> 
+				"translate(#{valueScale(d)}, 0)"
+		)
+		.style(
+			opacity: (_,i) -> if w>600 or (i%2) is 0 then 1 else 0
+		)		
+
+	averageLine.attr(
+			transform: "translate(#{valueScale(avg)}, #{chartHeight + 150})"
+		)
+
+	averageLine2.attr(
+			transform: "translate(#{valueScale(avgTotal)}, #{chartHeight + 110})"
+		)
+
+	averageLine3.attr(
+			transform: "translate(#{valueScale(.2307)}, #{chartHeight + 70})"
+		)
+
+	
+
+	if scaling is NUM
+		posScale = d3.scale.linear()
+			.domain([0, totalNumSpeakers])
+			.range([0, chartHeight-data.length-20])
+		getHeight = (d) ->
+			posScale d.numTotal
+	else	
+		posScale = d3.scale.linear()
+			.domain([0, data.length])
+			.range([0, chartHeight-data.length-20])
+		getHeight = (d) ->
+			posScale 1
+	
+
+sortFunc = (a,b) ->
+	switch sortMode
+		when RATIO  	
+			if a.ratioFemale > b.ratioFemale then return 1
+			if a.ratioFemale < b.ratioFemale then return -1
+			if a.series > b.series then return 1
+			if a.series < b.series then return -1
+			if a.date > b.date then return 1
+			if a.date < b.date then return -1
+			0
+		when TIME  
+			if a.date > b.date then return 1
+			if a.date < b.date then return -1
+			if a.event > b.event then return 1
+			if a.event < b.event then return -1
+			0
+		when SERIES
+			if a.series > b.series then return 1
+			if a.series < b.series then return -1
+			if a.date > b.date then return 1
+			if a.date < b.date then return -1
+			if a.event > b.event then return 1
+			if a.event < b.event then return -1
+			0
+		when NUM
+			if a.numTotal > b.numTotal then return 1
+			if a.numTotal < b.numTotal then return -1
+			if a.date > b.date then return 1
+			if a.date < b.date then return -1
+			if a.event > b.event then return 1
+			if a.event < b.event then return -1
+			0
+
+updatePositions = () ->
+	y = 0
+	verticalLabelsData = []
+	lastValue = null
+	for d in data
+		d.x = valueScale(d.ratioFemale)
+		d.y = y + 10
+		d.height =  getHeight d
+		
+		d.labelVisible = d.height>10
+		y += 1 + d.height
+
+		if verticalLabelsData.length
+			verticalLabelsData[verticalLabelsData.length-1].height = d.y - verticalLabelsData[verticalLabelsData.length-1].y
+
+		switch sortMode
+			when TIME  
+				if d.year isnt lastValue
+					verticalLabelsData.push 
+						label: d.year
+						y: d.y
+					lastValue = d.year
+				
+			when SERIES
+				if d.series isnt lastValue
+					verticalLabelsData.push 
+						label: d.series
+						y: d.y
+					lastValue = d.series
+
+
+updateVis = () =>
+	updateScales()
+	data = data.sort(sortFunc)
+	updatePositions()
+
+	# averageLine
+	# 	.transition()
+	# 	.duration(500)
+	# 	.style("opacity", ()->
+	# 		if scaling is NUM then 0 else 1
+	# 	)
+
+	# averageLine2
+	# 	.transition()
+	# 	.duration(500)
+	# 	.style("opacity", ()->
+	# 		if scaling is NUM then 1 else 0
+	# 	)
+
+	d3
+		.select("#scaling")
+		.selectAll("a")
+		.classed("active", ()->
+			d3.select(@).attr("data-value") is scaling
+		)
+
+	d3
+		.select("#sortMode")
+		.selectAll("a")
+		.classed("active", ()->
+			d3.select(@).attr("data-value") is sortMode
+		)
+
+	ani = events
+		.transition()
+		.duration(500)
+		.delay((d,i)->
+			d.y + d.x
+		)
+	
+	ani.attr(
+		transform: (d) -> 
+			"translate(#{d.x}, #{d.y})" 
+	)
+		
+
+	ani
+		.selectAll(".bg")
+		.attr(
+			height: (d) -> d.height 
+		)
+
+	ani
+		.selectAll(".female")
+		.attr(
+			height: (d) -> d.height 
+		)
+
+	ani
+		.selectAll(".male")
+		.attr(
+			height: (d) -> d.height 
+		)
+
+	ani
+		.selectAll(".male")
+		.attr(
+			height: (d) -> d.height 
+		)
+
+	ani
+		.selectAll("text")
+		.attr(
+			opacity: (d) -> if d.labelVisible then 1 else 0
+		)
+
+	verticalLabels.attr(
+		transform: "translate(#{w-220}, 0)"
+	)
+	
+	vl = verticalLabels.selectAll("g")
+		.data(verticalLabelsData, (d) -> d.label)
+
+		
+	enter = vl.enter()
+		.append("g")
+		.classed("verticalLabel", true)
+
+	enter
+		.attr(
+			"transform": (d)->"translate(0, #{h/2 + 2*(d.y-h/2)})"
+		)
+		.style(
+			opacity: 0
+		)
+
+	enter.append("text")
+		.text((d)->d.label
+		)
+		.attr(
+			"transform": "translate(-3, 12)"
+			"text-anchor": "end"
+		)
+
+
+	enter.append("line")
+		.attr(
+			x1: -2000
+			x2: 0
+			y1: 0
+			y2: 0
+		)
+		.attr(
+			"stroke-dasharray": "1,1"
+		)
+
+	# enter.append("rect")
+	# 	.attr(
+	# 		x: -w
+	# 		y: 0
+	# 		width: w
+	# 		height: (d)->d.height
+	# 	)
+	# 	.style(
+	# 		fill: "#000"
+	# 		opacity: (_,i) -> (i%2)*.1 + .05
+	# 	)
+
+
+
+	vl
+		.selectAll("text")
+		.text((d)->
+			if d.height >15
+				d.label
+			else
+				""
+		)
+	vl
+		.transition()
+		.duration(500)
+		.delay(if sortingChanged then 1500 else (d)->d.y)
+		.attr(
+			transform: (d)->"translate(0, #{d.y})"
+		)
+		.style(
+			opacity: 1
+		)
+
+	vl.exit()
+		.transition()
+		.duration(500)
+		.attr(
+			transform: (d)->"translate(0, #{h/2 + 2*(d.y-h/2)})"
+		)
+		.style(
+			opacity: 0
+		)
+		.remove()
+
 
 
 $ => 
