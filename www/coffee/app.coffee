@@ -637,7 +637,7 @@ initVis = () =>
 
 	enter.attr(
 		transform: (d) -> 
-			"translate(-200, #{d.y})" 
+			"translate(-200, -100)" 
 	)
 
 	enter.append("rect")
@@ -684,6 +684,7 @@ initVis = () =>
 		.text((d)->
 			d.event
 		)
+
 
 	updateVis()
 	events.style("cursor", "pointer")
